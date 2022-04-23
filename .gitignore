@@ -1,0 +1,12 @@
+# Ignore the google_api directory
+google_api/
+
+# ignore all saved data
+data/
+
+# ignore Slides
+Slides/
+slide_plots/
+
+# ignore levels data
+levels_data/
