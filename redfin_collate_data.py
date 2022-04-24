@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Data collection methods and data storage.
+"""Loop through all the saved redfin data, perform some simple additions and save
+the data as one file.
 """
 
 # Version 0.0: Original version from 2019
@@ -41,37 +42,3 @@ df['date_created'] = datetime.datetime.now()
 
 # Save the data to an hdf5 file.
 df.to_hdf(dir_to_collate + '/' + dump_file_name, key='df', mode='w')
-
-
-# crap = pd.read_hdf(dir_to_collate + '/' + dump_file_name)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# df = pd.read_csv(dir_to_collate + '/' + files[40])
-#
-# # Split off the redfin ID
-# f = lambda x : x.split('/')[-1]
-# df['redfin_id'] = df['URL (SEE https://www.redfin.com/buy-a-home/comparative-market-analysis FOR INFO ON ' \
-#                   'PRICING)'].apply(f)
-#
-# # Add in a column for the date this analysis occurred
-# df['date_created'] = datetime.datetime.now()
-#
-# # Save the data to an hdf5 file.
-# df.to_hdf(dir_to_collate + '/' + dump_file_name, key='df', mode='w')
