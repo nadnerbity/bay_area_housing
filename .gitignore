@@ -6,7 +6,12 @@ data/
 
 # ignore Slides
 Slides/
-slide_plots/
+# slide_plots/
 
 # ignore levels data
 levels_data/
+
+# other stuff that exists, but I dunno why
+.DS_Store
+.idea/
+geckodriver.log
