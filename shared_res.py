@@ -407,3 +407,8 @@ san_joaquin_county_zip ='\
 95376 \
 95377'
 san_joaquin_county_zip = san_joaquin_county_zip.split(' ')
+
+all_counties = santa_clara_county_zip + santa_cruz_county_zip + \
+    san_mateo_county_zip + san_francisco_county_zip + alameda_county_zip + \
+    contra_costa_county_zip + marin_county_zip + solano_county_zip + \
+    sonoma_county_zip + napa_county_zip + san_joaquin_county_zip
