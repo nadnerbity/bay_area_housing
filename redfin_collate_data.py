@@ -19,8 +19,9 @@ import time
 import datetime
 import os
 
-dir_to_collate = '/Users/brendan/Documents/Coding/RedfinTravelTime/data/March 28 2022'
-dump_file_name = 'all_data.h5'
+daymonyear = '28032022'
+dir_to_collate = '/Users/brendan/Documents/Coding/RedfinTravelTime/data/' + daymonyear
+dump_file_name = daymonyear + '.h5'
 
 # List files in the directory of interest
 files = os.listdir(dir_to_collate)
