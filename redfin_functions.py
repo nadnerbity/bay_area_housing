@@ -76,6 +76,22 @@ def load_data(name_of_data):
         return
     return gdf
 
+def load_data_by_date(name_of_data):
+    """
+    Load a data set by date.
+
+    :param name_of_data: Date of data set to load, e.g. 02062022
+    :return: GeoPandas dataframe containing housing data
+    """
+    dir_to_data = '/Users/brendan/Documents/Coding/RedfinTravelTime/data/' + name_of_data + '/' + name_of_data + '.h5'
+    df = pd.read_hdf(dir_to_data)
+    # Select only single family homes
+    df = df.loc[df['PROPERTY TYPE'] == 'Single Family Residential']
+    df = df.loc[df['SALE TYPE'] == 'MLS Listing']
+    # Convert pandas DataFrame to GeoPandas DataFrame
+    gdf = convert_df_to_gdf(df)
+
+    return gdf
 
 def load_gpr_and_scalers(data_name):
     """

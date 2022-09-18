@@ -232,6 +232,7 @@ def how_much_can_afford(x, s, d, r, rt, rm):
     :return: Money remaining per month after housing is paid for
     """
     if d == 0:
+        # If d == 0, then assume 20% down payment
         return (0.3/12)*s + (1/12)*standard_deduction_or_mid(s, 0.8*x, r) - monthly_payment(r, 0.8*x, 360.0) - x*(rt+rm)
     else:
         return (0.3/12)*s + (1/12)*standard_deduction_or_mid(s, x-d, r) - monthly_payment(r, x-d, 360.0) - x*(rt + rm)

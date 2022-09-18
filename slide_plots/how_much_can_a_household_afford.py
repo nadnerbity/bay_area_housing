@@ -73,8 +73,8 @@ ax1 = fig.add_subplot(111)
 ax1.plot(yearly_salary/1000, home_value_3 + 100, 'k-')
 ax1.plot(yearly_salary/1000, home_value_5 + 100, 'k--')
 ax1.plot(yearly_salary/1000, home_value_7 + 100, 'k', linestyle='dashdot')
-ax1.set_xlabel('Household Yearly Salary [1000 $]', fontsize=20)
-ax1.set_ylabel('Maximum House Price [1000 $]', fontsize=18)
+ax1.set_xlabel('Household Yearly Direct Comp. [1000 $]', fontsize=20)
+ax1.set_ylabel('Maximum Affordable Price [1000 $]', fontsize=16)
 ax1.legend(['3% Interest Rate', '5%', '7%'], loc='lower right')
 # Add in slac salaries
 plt.axhline(y=1825, color='r')  # Santa Clara
