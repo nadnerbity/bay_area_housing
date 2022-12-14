@@ -19,7 +19,7 @@ import time
 import datetime
 import os
 
-daymonyear = '15092022'
+daymonyear = '28112022'
 dir_to_collate = '/Users/brendan/Documents/Coding/RedfinTravelTime/data/' + daymonyear
 dump_file_name = daymonyear + '.h5'
 
