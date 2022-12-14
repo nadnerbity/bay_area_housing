@@ -229,7 +229,8 @@ def how_much_can_afford(x, s, d, r, rt, rm):
     :param r: monthly interest rate
     :param rt: monthly tax rate
     :param rm: monthly maintenance rate
-    :return: Money remaining per month after housing is paid for
+    :return: Money remaining that HUD says can safely be used for housing. If this is zero you're at the HUD
+    recommended 30%. If this number is negative you're paying more than 30%. If this number is positive you're paying less than 30%.
     """
     if d == 0:
         # If d == 0, then assume 20% down payment
