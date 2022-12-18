@@ -8,7 +8,7 @@ __version__ = "0.1"
 __status__ = "Development"
 
 import numpy as np
-
+from scipy.optimize import fsolve
 
 def principal_to_income(r, n):
     return (1-(1+r)**-n)/40/r
@@ -219,13 +219,14 @@ def standard_deduction_or_mid(ss, pp, rr):
 
 def how_much_can_afford(x, s, d, r, rt, rm):
     """
-    Function used to solve for how much a family can afford. This function is used with an optimizer.
+    Function used to solve for how much a family can afford based on their income. This function is used with an
+    optimizer.
     It starts with HUD defined maximum housing costs (30% salary before taxes) and adds in any money that might come
     from using the mortgage interest deduction and subtracts off the cost of the mortgage, taxes and maintenance.
 
     :param x: Price of house
     :param s: Yearly salary of family
-    :param d: House down payment
+    :param d: House down payment in dollars
     :param r: monthly interest rate
     :param rt: monthly tax rate
     :param rm: monthly maintenance rate
@@ -237,3 +238,43 @@ def how_much_can_afford(x, s, d, r, rt, rm):
         return (0.3/12)*s + (1/12)*standard_deduction_or_mid(s, 0.8*x, r) - monthly_payment(r, 0.8*x, 360.0) - x*(rt+rm)
     else:
         return (0.3/12)*s + (1/12)*standard_deduction_or_mid(s, x-d, r) - monthly_payment(r, x-d, 360.0) - x*(rt + rm)
+
+
+def salary_needed_for_given_house_price(s, x, d, r, rt, rm):
+    """
+        Function used to solve for how much salary is required to by a house of value x.
+        This is the same as 'how_much_can_afford' with the first two variables switched for use to scipy.fsolve
+        It starts with HUD defined maximum housing costs (30% salary before taxes) and adds in any money that might come
+        from using the mortgage interest deduction and subtracts off the cost of the mortgage, taxes and maintenance.
+
+        :param x: Price of house
+        :param s: Yearly salary of family
+        :param d: House down payment in dollars
+        :param r: monthly interest rate
+        :param rt: monthly tax rate
+        :param rm: monthly maintenance rate
+        :return: Money remaining that HUD says can safely be used for housing. If this is zero you're at the HUD
+        recommended 30%. If this number is negative you're paying more than 30%. If this number is positive you're paying less than 30%.
+        """
+    if d == 0:
+        # If d == 0, then assume 20% down payment
+        return (0.3/12)*s + (1/12)*standard_deduction_or_mid(s, 0.8*x, r) - monthly_payment(r, 0.8*x, 360.0) - x*(rt+rm)
+    else:
+        return (0.3/12)*s + (1/12)*standard_deduction_or_mid(s, x-d, r) - monthly_payment(r, x-d, 360.0) - x*(rt + rm)
+
+
+def add_required_salary_to_dataframe(df_in, d, r, rt, rm):
+    """
+    Function to add a column to a pandas dataframe based on the price of a house and interest and tax rates.
+    
+    :param df_in: Dataframe to add the column 'required_salary' to
+    :param d: House down payment in dollars
+    :param r: monthly interest rate
+    :param rt: monthly tax rate
+    :param rm: monthly maintenance rate
+    :return:
+    """
+    a = lambda y: fsolve(salary_needed_for_given_house_price, [250000],
+               args=(y.PRICE, d, r, rt, rm))[0] / 1000
+    df_in['required_salary'] = df_in.apply(a, axis=1)
+    return df_in

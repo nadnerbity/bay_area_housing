@@ -61,28 +61,33 @@ in_bdy_28112022 = gdf_28112022[gdf_28112022.geometry.within(gpd_cont.geometry[0]
 in_bdy_28032022 = gdf_28032022[gdf_28032022.geometry.within(gpd_cont.geometry[0])]
 plot_gpd_data_on_map(in_bdy_28112022, ax1, 'red')
 
+# This throws a warning that will need to be fixed.
+in_bdy_28032022 = add_required_salary_to_dataframe(in_bdy_28032022, 0, 0.051/12, 0.0115/12, 0.01/12)
+in_bdy_28112022 = add_required_salary_to_dataframe(in_bdy_28112022, 0, 0.06183/12, 0.0115/12, 0.01/12)
 
+scale_value = 1e6
 plt.close(3456)
 plt.figure(3456)
-ax = plt.subplot(211)
-plt.hist(in_bdy_28032022.PRICE.values,
+ax1 = plt.subplot(211)
+plt.hist(in_bdy_28032022.required_salary.values,
          50,
          density=False,
          facecolor='r',
          alpha=0.75)
-plt.xlim([0.5e6, 2.5e6])
-plt.ylim([0, 20])
-ax.set_title('March 28th 2022', fontsize=18)
+plt.xlim([0, 600])
+plt.ylim([0, 22])
+ax1.set_title('March 28th 2022', fontsize=18)
 
-ax = plt.subplot(212)
-plt.hist(in_bdy_28112022.PRICE.values,
+ax2 = plt.subplot(212)
+plt.hist(in_bdy_28112022.required_salary.values,
          50,
          density=False,
          facecolor='b',
          alpha=0.75)
-plt.xlim([0.5e6, 2.5e6])
-plt.ylim([0, 20])
-ax.set_title('November 28th 2022', fontsize=18)
+plt.xlim([0, 600])
+plt.ylim([0, 22])
+ax2.set_title('November 28th 2022', fontsize=18)
+ax2.set_xlabel('Required Yearly Salary [1000 $]', fontsize=18)
 
 plt.tight_layout()
 
