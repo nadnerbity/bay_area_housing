@@ -46,7 +46,7 @@ fig1, ax1 = plot_bay_area_map(1234, area_to_load)  # generate a bay area map
 plot_gpd_boundary_on_map(gpd_cont, ax1, 'black')
 plot_gpd_data_on_map(in_boundary, ax1, 'red')  # Plot the housing data on it.
 
-# ------------------- CREATE A DATAFRAM TO HOLD THE DATE DATA --------------------------
+# ------------------- CREATE A DATAFRAME TO HOLD THE DATE DATA --------------------------
 
 county_list = []
 for index in gdf_c.iterrows():
@@ -55,20 +55,24 @@ for index in gdf_c.iterrows():
 column_names = ["date", "median_price_near_slac"]
 column_names = column_names + county_list
 df_by_date = pd.DataFrame(columns=column_names)
-dates = ['28032022', '02062022', '21062022', '06072022', '15092022']
+dates = ['28032022', '02062022', '21062022', '06072022', '15092022', '28112022']
 # gdf = load_data_by_date(data_name_to_load)
 
 # The Dates are the rows, columns are locations of median prices.
+gilroy = []
 for index in dates:
     A = [index]
     # Load the data of interest
     gdf = load_data_by_date(index)
 
+    gilroy.append(gdf[gdf['CITY'] == 'Gilroy'].PRICE.median())
+
     # Extract only the houses inside the 27.6 minute commute from SLAC
     in_boundary = gdf[gdf.geometry.within(gpd_cont.geometry[0])]
     A.append(in_boundary.PRICE.median())
 
-    # Extract only houses in San Mateo
+
+    # Extract housing data by county
     for k in county_list:
         temp = gdf[gdf.geometry.within(gdf_c.loc[k].geometry)]
         A.append(temp.PRICE.median())

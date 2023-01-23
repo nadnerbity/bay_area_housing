@@ -28,7 +28,8 @@ gdf_28112022 = gdf_28112022.loc[gdf_28112022['BEDS'] > 2.0]
 # Remove <=1 bathroom listings, these aren't family friendly
 gdf_28112022 = gdf_28112022.loc[gdf_28112022['BATHS'] > 1.0]
 # Keep only house less than $2.5M
-gdf_28112022 = gdf_28112022.loc[gdf_28112022['PRICE'] < 2500000.0]
+# gdf_28112022 = gdf_28112022.loc[gdf_28112022['PRICE'] < 2500000.0]
+gdf_28112022.sort_values(by=['PRICE'], inplace=True)
 
 gdf_28032022 = load_data_by_date('28032022')
 
@@ -40,7 +41,8 @@ gdf_28032022 = gdf_28032022.loc[gdf_28032022['BEDS'] > 2.0]
 # Remove <=1 bathroom listings, these aren't family friendly
 gdf_28032022 = gdf_28032022.loc[gdf_28032022['BATHS'] > 1.0]
 # Keep only house less than $2.5M
-gdf_28032022 = gdf_28032022.loc[gdf_28032022['PRICE'] < 2500000.0]
+# gdf_28032022 = gdf_28032022.loc[gdf_28032022['PRICE'] < 2500000.0]
+gdf_28032022.sort_values(by=['PRICE'], inplace=True)
 
 # ------------------- PLOT 27.6 MINUTE DRIVE --------------------------
 data_name_to_load = 'slac'

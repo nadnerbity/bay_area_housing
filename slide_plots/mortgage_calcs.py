@@ -2,7 +2,6 @@
 """Build functions you'll need to calculate quantities associated with a mortgage
 """
 
-
 __license__ = "GPL"
 __version__ = "0.1"
 __status__ = "Development"
@@ -10,11 +9,12 @@ __status__ = "Development"
 import numpy as np
 from scipy.optimize import fsolve
 
+
 def principal_to_income(r, n):
-    return (1-(1+r)**-n)/40/r
+    return (1 - (1 + r) ** -n) / 40 / r
 
 
-def monthly_payment(r=(0.04/12.0), p=1000000.0, n=360.0):
+def monthly_payment(r=(0.04 / 12.0), p=1000000.0, n=360.0):
     """
     A function to calculate the monthly payment for a loan.
 
@@ -22,10 +22,10 @@ def monthly_payment(r=(0.04/12.0), p=1000000.0, n=360.0):
     :param p: initial loan value
     :param n: total number of payments
     """
-    return (r*p)/(1.0-(1.0+r)**(-n))
+    return (r * p) / (1.0 - (1.0 + r) ** (-n))
 
 
-def interest_paid_by_month(i=1, r=(0.04/12.0), p=1000000.0, n=360.0):
+def interest_paid_by_month(i=1, r=(0.04 / 12.0), p=1000000.0, n=360.0):
     """
     A function to calculate the interest paid on payment i.
     i.e. how much of the ith payment is interest
@@ -36,10 +36,10 @@ def interest_paid_by_month(i=1, r=(0.04/12.0), p=1000000.0, n=360.0):
     :param n: total number of payments
     """
     c = monthly_payment(r, p, n)
-    return (p*r-c)*(1+r)**(i-1)+c
+    return (p * r - c) * (1 + r) ** (i - 1) + c
 
 
-def principal_paid_by_month(i=1, r=(0.04/12.0), p=1000000.0, n=360.0):
+def principal_paid_by_month(i=1, r=(0.04 / 12.0), p=1000000.0, n=360.0):
     """
     A function to calculate the principal paid on payment i.
     i.e. how much of the ith payment is principal
@@ -50,10 +50,10 @@ def principal_paid_by_month(i=1, r=(0.04/12.0), p=1000000.0, n=360.0):
     :param n: total number of payments
     """
     c = monthly_payment(r, p, n)
-    return (c-p*r)*(1+r)**(i-1)
+    return (c - p * r) * (1 + r) ** (i - 1)
 
 
-def total_principal_paid(i=1, r=(0.04/12.0), p=1000000.0, n=360.0):
+def total_principal_paid(i=1, r=(0.04 / 12.0), p=1000000.0, n=360.0):
     """
     A function to calculate the total principal paid after payment i
 
@@ -63,10 +63,10 @@ def total_principal_paid(i=1, r=(0.04/12.0), p=1000000.0, n=360.0):
     :param n: total number of payments
     """
     c = monthly_payment(r, p, n)
-    return (c-p*r)*((1+r)**i-1)/r
+    return (c - p * r) * ((1 + r) ** i - 1) / r
 
 
-def total_interest_paid(i=1, r=(0.04/12.0), p=1000000.0, n=360.0):
+def total_interest_paid(i=1, r=(0.04 / 12.0), p=1000000.0, n=360.0):
     """
     A function to calculate the total principal paid after payment i
 
@@ -76,10 +76,10 @@ def total_interest_paid(i=1, r=(0.04/12.0), p=1000000.0, n=360.0):
     :param n: total number of payments
     """
     c = monthly_payment(r, p, n)
-    return (p*r-c)*((1+r)**i-1)/r + i*c
+    return (p * r - c) * ((1 + r) ** i - 1) / r + i * c
 
 
-def net_after_selling(i=1, r=(0.04/12.0), p=1000000.0, n=360.0, ps=1000000.0, rt=(0.0115/12)):
+def net_after_selling(i=1, r=(0.04 / 12.0), p=1000000.0, n=360.0, ps=1000000.0, rt=(0.0115 / 12)):
     """
     A function to calculate the net to the owner after selling a home at price ps.
     Assumes 20% down.
@@ -95,22 +95,23 @@ def net_after_selling(i=1, r=(0.04/12.0), p=1000000.0, n=360.0, ps=1000000.0, rt
     :param rt: monthly tax rate
     """
     # Split the calculation up to describe the terms
-    temp = 1.00*ps  # 0% of the sale price goes to a realtor
-    temp = temp - 0.80*p + total_principal_paid(i, r, 0.8*p, n)  # Subtract off the loan amount, add in principal paid
-    temp = temp - 0.03*p  # Buyer paid 3% to a realtor
-    temp = temp - i*rt*p  # Property taxes
-    temp = temp - i*0.01/12.0*p  # Maintenance
+    temp = 1.00 * ps  # 0% of the sale price goes to a realtor
+    temp = temp - 0.80 * p + total_principal_paid(i, r, 0.8 * p,
+                                                  n)  # Subtract off the loan amount, add in principal paid
+    temp = temp - 0.03 * p  # Buyer paid 3% to a realtor
+    temp = temp - i * rt * p  # Property taxes
+    temp = temp - i * 0.01 / 12.0 * p  # Maintenance
 
     # return 0.97*ps - (0.8*p - total_principal_paid(i, r, p, n)) - 0.03*p - i*0.01/12.0*p - i*0.01/12.0*p
     return temp
 
 
 def net_after_selling_landed(i=1,
-                             r=(0.04/12.0),
+                             r=(0.04 / 12.0),
                              pi=1000000.0,
                              n=360.0,
                              ps=1000000.0,
-                             rt=(0.0115/12),
+                             rt=(0.0115 / 12),
                              d=50000.0,
                              dl=50000.0):
     """
@@ -129,17 +130,17 @@ def net_after_selling_landed(i=1,
     returns: Net to homeowner, total principal paid, total taxes paid
     """
     # Split the calculation up to describe the terms
-    temp = 1.00*ps  # 0% of the sale price goes to a realtor
+    temp = 1.00 * ps  # 0% of the sale price goes to a realtor
     temp = temp - (pi - d - dl)  # Subtract off the initial loan amount, less down payments
     princ_paid = total_principal_paid(i, r, (pi - d - dl), n)
     temp = temp + princ_paid  # Add back in the principal paid
-    temp = temp - 0.00*pi  # Buyer paid 0% to a realtor
-    temp = temp - i*rt*pi  # Subtract off the amount paid in property taxes
-    temp = temp - i*0.00/12.0*pi  # Maintenance
-    paid_to_landed = dl*(1+2.5*(ps-pi)/pi)
+    temp = temp - 0.00 * pi  # Buyer paid 0% to a realtor
+    temp = temp - i * rt * pi  # Subtract off the amount paid in property taxes
+    temp = temp - i * 0.00 / 12.0 * pi  # Maintenance
+    paid_to_landed = dl * (1 + 2.5 * (ps - pi) / pi)
     temp = temp - paid_to_landed  # Landed's cut, including getting their down payment back
 
-    return temp, princ_paid, i*rt*pi, paid_to_landed
+    return temp, princ_paid, i * rt * pi, paid_to_landed
 
 
 def calc_rate_of_return(p=1000000.0, ps=1100000.0, n=12.0):
@@ -150,7 +151,7 @@ def calc_rate_of_return(p=1000000.0, ps=1100000.0, n=12.0):
     :param ps: sale price
     :param n: total number of intervals (years, months)
     """
-    return np.exp(np.log(ps/p)/n)-1
+    return np.exp(np.log(ps / p) / n) - 1
 
 
 def calc_sale_price(p=1000000.0, n=12.0, a=0.02):
@@ -163,7 +164,7 @@ def calc_sale_price(p=1000000.0, n=12.0, a=0.02):
     :param n: total number of intervals (years, months)
     :param a: price change rate per n
     """
-    return p*(1+a)**n
+    return p * (1 + a) ** n
 
 
 def calc_taxes_on_income(s):
@@ -235,9 +236,13 @@ def how_much_can_afford(x, s, d, r, rt, rm):
     """
     if d == 0:
         # If d == 0, then assume 20% down payment
-        return (0.3/12)*s + (1/12)*standard_deduction_or_mid(s, 0.8*x, r) - monthly_payment(r, 0.8*x, 360.0) - x*(rt+rm)
+        return (0.3 / 12) * s + (1 / 12) * standard_deduction_or_mid(s, 0.8 * x, r) - monthly_payment(r, 0.8 * x,
+                                                                                                      360.0) - x * (
+                           rt + rm)
     else:
-        return (0.3/12)*s + (1/12)*standard_deduction_or_mid(s, x-d, r) - monthly_payment(r, x-d, 360.0) - x*(rt + rm)
+        return (0.3 / 12) * s + (1 / 12) * standard_deduction_or_mid(s, x - d, r) - monthly_payment(r, x - d,
+                                                                                                    360.0) - x * (
+                           rt + rm)
 
 
 def salary_needed_for_given_house_price(s, x, d, r, rt, rm, hoa):
@@ -260,11 +265,13 @@ def salary_needed_for_given_house_price(s, x, d, r, rt, rm, hoa):
         """
     if d == 0:
         # If d == 0, then assume 20% down payment
-        return (0.3/12)*s + (1/12)*standard_deduction_or_mid(s, 0.8*x, r) - monthly_payment(r, 0.8*x, 360.0) - x*(
-                rt+rm) - hoa
+        return (0.3 / 12) * s + (1 / 12) * standard_deduction_or_mid(s, 0.8 * x, r) - monthly_payment(r, 0.8 * x,
+                                                                                                      360.0) - x * (
+                       rt + rm) - hoa
     else:
-        return (0.3/12)*s + (1/12)*standard_deduction_or_mid(s, x-d, r) - monthly_payment(r, x-d, 360.0) - x*(rt +
-                                                                                                              rm) - hoa
+        return (0.3 / 12) * s + (1 / 12) * standard_deduction_or_mid(s, x - d, r) - monthly_payment(r, x - d,
+                                                                                                    360.0) - x * (rt +
+                                                                                                                  rm) - hoa
 
 
 def add_required_salary_to_dataframe(df_in, d, r, rt, rm):
@@ -278,7 +285,12 @@ def add_required_salary_to_dataframe(df_in, d, r, rt, rm):
     :param rm: monthly maintenance rate
     :return:
     """
-    a = lambda y: fsolve(salary_needed_for_given_house_price, [250000],
-               args=(y.PRICE, d, r, rt, rm, y.HOAperMonth))[0] / 1000
+    if hasattr(df_in, 'HOAperMonth'):
+        a = lambda y: fsolve(salary_needed_for_given_house_price, [250000],
+                             args=(y.PRICE, d, r, rt, rm, y.HOAperMonth))[0] / 1000
+    else:
+        a = lambda y: fsolve(salary_needed_for_given_house_price, [250000],
+                             args=(y.PRICE, d, r, rt, rm, 0))[0] / 1000
+
     df_in['required_salary'] = df_in.apply(a, axis=1)
     return df_in
