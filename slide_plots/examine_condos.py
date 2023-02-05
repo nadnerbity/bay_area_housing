@@ -45,21 +45,28 @@ lat_grid, lng_grid, y_grid = generate_grid_from_gpr(gdf, gpr, x_scaler, y_scaler
 print('Generating contours')
 time_to_contour = 60.0*27.6
 gpd_cont = generate_time_contours_from_grid(lng_grid, lat_grid, y_grid, time_to_contour)
-plot_gpd_boundary_on_map(gpd_cont, ax1, 'black')
+
 #
 
-# (gdf.BATHS.values >= 2.0)
-# Keep only 2+2 or larger, we are looking for things for a family.
-# in_bdy = gdf.loc[(gdf.BATHS.values >= 2.0) & (gdf.BEDS.values >= 2.0)]
 
 # # Extract only houses within a 27.6 minute boundary of SLAC
 # in_bdy = in_bdy[in_bdy.geometry.within(gpd_cont.geometry[0])]
 
-OneAndOne = gdf.loc[(gdf.BATHS.values >= 1.0) & (gdf.BEDS.values >= 1.0)];
+OneAndOne = gdf.loc[(gdf.BATHS.values >= 1.0) & (gdf.BEDS.values >= 1.0)]
+OneAndOne = OneAndOne[OneAndOne.HOAperMonth < 2500]
 OneAndOne = OneAndOne[OneAndOne.geometry.within(gpd_cont.geometry[0])]
+OneAndOne.sort_values(by=['PRICE'], inplace=True)
 
 TwoAndTwo = gdf.loc[(gdf.BATHS.values >= 2.0) & (gdf.BEDS.values >= 2.0)]
+TwoAndTwo = TwoAndTwo[TwoAndTwo.HOAperMonth < 2500]
 TwoAndTwo = TwoAndTwo[TwoAndTwo.geometry.within(gpd_cont.geometry[0])]
+TwoAndTwo.sort_values(by=['PRICE'], inplace=True)
+
+# ------- PLOTS ----------------------
+fig1, ax1 = plot_bay_area_map(1234, 'slac')
+plot_gpd_boundary_on_map(gpd_cont, ax1, 'black')
+plot_gpd_data_on_map(OneAndOne, ax1, 'red')
+# plot_gpd_data_on_map(TwoAndTwo, ax1, 'blue')
 
 
 scale_value = 1e6
@@ -88,5 +95,78 @@ ax2.set_xlabel('Required Yearly Salary [1000 $]', fontsize=18)
 
 plt.tight_layout()
 
+# --------------------------------------------------------------------------------
+# 1 + 1 Condos
+# --------------------------------------------------------------------------------
 
+plt.close(34)
+plt.figure(34)
+plt.scatter(OneAndOne.PRICE/1e6, OneAndOne.HOAperMonth, facecolor='r')
+plt.xlabel('Price [$M]', fontsize=20)
+plt.ylabel('HOA Dues Per Month [$]', fontsize=20)
+plt.title('1+1 Condos', fontsize=20)
+plt.tight_layout()
+
+plt.close(35)
+plt.figure(35)
+ax1 = plt.subplot(211)
+plt.hist(OneAndOne.PRICE.values/1e6,
+         50,
+         density=False,
+         facecolor='r',
+         alpha=0.75)
+plt.xlabel('Price [$M]', fontsize=20)
+plt.ylabel('N [1]', fontsize=20)
+plt.xlim([0, 2.0])
+
+ax2 = plt.subplot(212)
+plt.hist(OneAndOne.required_salary.values,
+         50,
+         density=False,
+         facecolor='r',
+         alpha=0.75)
+plt.xlabel('Required Yearly Salary [$k]', fontsize=20)
+plt.ylabel('N [1]', fontsize=20)
+plt.xlim([0, 600])
+
+plt.tight_layout()
+
+# --------------------------------------------------------------------------------
+# 2 + 2 Condos
+# --------------------------------------------------------------------------------
+fig1, ax1 = plot_bay_area_map(1235, 'slac')
+plot_gpd_boundary_on_map(gpd_cont, ax1, 'black')
+plot_gpd_data_on_map(TwoAndTwo, ax1, 'blue')
+
+plt.close(36)
+plt.figure(36)
+plt.scatter(TwoAndTwo.PRICE/1e6, TwoAndTwo.HOAperMonth, facecolor='b')
+plt.xlabel('Price [$M]', fontsize=20)
+plt.ylabel('HOA Dues Per Month [$]', fontsize=20)
+plt.title('2+2 Condos', fontsize=20)
+plt.tight_layout()
+
+plt.close(37)
+plt.figure(37)
+ax1 = plt.subplot(211)
+plt.hist(TwoAndTwo.PRICE.values/1e6,
+         50,
+         density=False,
+         facecolor='b',
+         alpha=0.75)
+plt.xlabel('Price [$M]', fontsize=20)
+plt.ylabel('N [1]', fontsize=20)
+plt.xlim([0, 2.0])
+
+ax2 = plt.subplot(212)
+plt.hist(TwoAndTwo.required_salary.values,
+         50,
+         density=False,
+         facecolor='b',
+         alpha=0.75)
+plt.xlabel('Required Yearly Salary [$k]', fontsize=20)
+plt.ylabel('N [1]', fontsize=20)
+plt.xlim([0, 600])
+
+plt.tight_layout()
 
