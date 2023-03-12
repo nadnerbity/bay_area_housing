@@ -28,9 +28,8 @@ gdf_28112022 = gdf_28112022.loc[gdf_28112022['BEDS'] > 2.0]
 # Remove <=1 bathroom listings, these aren't family friendly
 gdf_28112022 = gdf_28112022.loc[gdf_28112022['BATHS'] > 1.0]
 # Keep only house less than $2.5M
-# gdf_28112022 = gdf_28112022.loc[gdf_28112022['PRICE'] < 2500000.0]
+# gdf_28112022 = gdf_28112022.loc[gdf_28112022['PRICE'] < 5000000.0]
 gdf_28112022.sort_values(by=['PRICE'], inplace=True)
-
 
 gdf_28032022 = load_data_by_date('28032022')
 
@@ -42,7 +41,7 @@ gdf_28032022 = gdf_28032022.loc[gdf_28032022['BEDS'] > 2.0]
 # Remove <=1 bathroom listings, these aren't family friendly
 gdf_28032022 = gdf_28032022.loc[gdf_28032022['BATHS'] > 1.0]
 # Keep only house less than $2.5M
-# gdf_28032022 = gdf_28032022.loc[gdf_28032022['PRICE'] < 2500000.0]
+gdf_28032022 = gdf_28032022.loc[gdf_28032022['PRICE'] < 5000000.0]
 gdf_28032022.sort_values(by=['PRICE'], inplace=True)
 
 # ------------------- PLOT 27.6 MINUTE DRIVE --------------------------
@@ -69,8 +68,8 @@ in_bdy_28032022 = add_required_salary_to_dataframe(in_bdy_28032022, 0, 0.051/12,
 in_bdy_28112022 = add_required_salary_to_dataframe(in_bdy_28112022, 0, 0.06183/12, 0.0115/12, 0.01/12)
 
 scale_value = 1e6
-plt.close(3456)
-plt.figure(3456)
+plt.close(3457)
+plt.figure(3457)
 ax1 = plt.subplot(211)
 plt.hist(in_bdy_28032022.required_salary.values,
          50,
@@ -95,4 +94,19 @@ ax2.set_xlabel('Required Yearly Salary [1000 $]', fontsize=18)
 plt.tight_layout()
 
 
+plt.figure(34)
+plt.plot(in_bdy_28112022.PRICE, in_bdy_28112022.DaysOnMarket, 'bo')
+plt.xlabel('Price [$]', fontsize=18)
+plt.ylabel('Days On Market [Days]', fontsize=18)
 
+temp = in_bdy_28112022[in_bdy_28112022['DaysOnMarket'] <= 200]
+
+plt.figure(45)
+plt.hist(temp.DaysOnMarket,
+         40,
+         density=False,
+         facecolor='b',
+         alpha=0.75)
+plt.xlabel('Days On Market [Days]', fontsize=18)
+plt.ylabel('Count [1]', fontsize=18)
+plt.tight_layout()

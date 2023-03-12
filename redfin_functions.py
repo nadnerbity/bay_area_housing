@@ -90,6 +90,8 @@ def load_data_by_date(name_of_data):
     df = df.loc[df['SALE TYPE'] == 'MLS Listing']
     # Convert pandas DataFrame to GeoPandas DataFrame
     gdf = convert_df_to_gdf(df)
+    gdf = gdf.rename(columns={'HOA/MONTH': 'HOAperMonth'})
+    gdf = gdf.rename(columns={'DAYS ON MARKET': 'DaysOnMarket'})
 
     return gdf
 

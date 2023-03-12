@@ -72,7 +72,7 @@ def load_a_page_and_save_data(driver_loc, zipcode_in):
 
 # Select the zipcodes to search
 zip_list = shared_res.santa_clara_county_zip
-path_to_save = '/Users/brendan/Documents/Coding/RedfinTravelTime/data'
+path_to_save = '/Users/brendan/Documents/Coding/RedfinTravelTime/data/12032023'
 
 driver = create_browser(path_to_save)
 
