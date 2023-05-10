@@ -21,9 +21,11 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import griddata
 from joblib import load
 from itertools import compress
+import os
 plt.ion()
 plt.close('all')
 
+file_path = os.path.abspath(os.path.dirname(__file__))
 
 def load_data(name_of_data):
     """
@@ -83,7 +85,7 @@ def load_data_by_date(name_of_data):
     :param name_of_data: Date of data set to load, e.g. 02062022
     :return: GeoPandas dataframe containing housing data
     """
-    dir_to_data = '/Users/brendan/Documents/Coding/RedfinTravelTime/data/' + name_of_data + '/' + name_of_data + '.h5'
+    dir_to_data = file_path + '/data/' + name_of_data + '/' + name_of_data + '.h5'
     df = pd.read_hdf(dir_to_data)
     # Select only single family homes
     df = df.loc[df['PROPERTY TYPE'] == 'Single Family Residential']
@@ -143,18 +145,21 @@ def get_contour_verts(cn):
 
 def load_county_shape_file():
     """
-    Open the shape files for the Bay Area counties.
+    Open the shape files for the Bay Area counties. You really should do this once and save it in the format you
+    want, then just load that.
     I guess Santa Cruz isn't in the bay area?
     :return: GeoPandas dataframe with the county shape polygons
     """
     # Open the shape files for the Bay Area counties.
-    shape_file = r'/Users/brendan/Documents/Coding/RedfinTravelTime/BayAreaCounties/geo_export_b749f330-e0bd-4f34-80b8-f9a7de8529af.shp'
+    shape_file = file_path + '/Counties/geo_export_b749f330-e0bd-4f34-80b8-f9a7de8529af.shp'
+    # shape_file = r'/Users/brendan/Documents/Coding/RedfinTravelTime/Counties/geo_export_b749f330-e0bd-4f34-80b8-f9a7de8529af.shp'
     gdf = gpd.read_file(shape_file)  # Read file into a geodataframe
     gdf = gdf.to_crs(epsg=3857)
     gdf = gdf.set_index('county')
 
     # Add in Santa Cruz, which isn't the Bay Area because ???
-    shape_file_SC = r'/Users/brendan/Documents/Coding/RedfinTravelTime/BayAreaCounties/SC_County_Boundary/County_Boundary.shp'
+    # shape_file_SC = r'/Users/brendan/Documents/Coding/RedfinTravelTime/Counties/SC_County_Boundary/County_Boundary.shp'
+    shape_file_SC = file_path + '/Counties/SC_County_Boundary/County_Boundary.shp'
     gdf_SC = gpd.read_file(shape_file_SC)  # Read file into a geodataframe
     gdf_SC = gdf_SC.to_crs(epsg=3857)
     gdf_SC['county'] = 'Santa Cruz'
@@ -162,8 +167,19 @@ def load_county_shape_file():
     gdf_SC['fipsstco'] = '06087'
     gdf_SC = gdf_SC.drop(labels=['OBJECTID', 'County_Bdy', 'SHAPE_Leng', 'SHAPE_Area'], axis=1)
     gdf_SC = gdf_SC.set_index('county')
-    gdf = gpd.GeoDataFrame( pd.concat([gdf, gdf_SC], ignore_index=False))
+    gdf = gpd.GeoDataFrame(pd.concat([gdf, gdf_SC], ignore_index=False))
     gdf = gdf.set_crs(epsg=3857)
+
+    shape_file_IL = file_path + '/Counties/IL_BNDY_County/IL_BNDY_County_Py.shp'
+    gdf_IL = gpd.read_file(shape_file_IL)
+    gdf_IL = gdf_IL.to_crs(epsg=3857)
+    gdf_IL = gdf_IL.rename(columns={'COUNTY_NAM': 'county', 'CO_FIPS': 'fipsstco'})
+    gdf_IL = gdf_IL.set_index('county')
+    # Add the state number (17) and convert the FIPS to the appropriate format
+    gdf_IL['fipsstco'] = gdf_IL['fipsstco'].apply(lambda x : '17{:03d}'.format(x))
+    gdf = gpd.GeoDataFrame(pd.concat([gdf, gdf_IL], ignore_index=False))
+    gdf = gdf.set_crs(epsg=3857)
+
     return gdf
 
 
@@ -237,6 +253,13 @@ def plot_bay_area_map(fig_num, data_name):
         y_range = 30000
     elif data_name == 'livermore':
         gdf_h = convert_lat_lng_to_gdf([-121.71852305292059], [37.689547127607895])
+        gdf_h.plot(ax=ax, color='black', markersize=50, marker='*')
+        x_range = 70000
+        y_range = 75000
+    elif data_name == 'chicago':
+        gdf_h = convert_lat_lng_to_gdf([-87.981841], [41.709999]) # Argonne
+        gdf_h.plot(ax=ax, color='black', markersize=50, marker='*')
+        gdf_h = convert_lat_lng_to_gdf([-88.261632], [41.838196]) # FermiLab
         gdf_h.plot(ax=ax, color='black', markersize=50, marker='*')
         x_range = 70000
         y_range = 75000
