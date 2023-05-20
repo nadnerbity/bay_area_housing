@@ -22,6 +22,7 @@ from scipy.interpolate import griddata
 from joblib import load
 from itertools import compress
 import os
+import pickle
 plt.ion()
 plt.close('all')
 
@@ -150,35 +151,9 @@ def load_county_shape_file():
     I guess Santa Cruz isn't in the bay area?
     :return: GeoPandas dataframe with the county shape polygons
     """
-    # Open the shape files for the Bay Area counties.
-    shape_file = file_path + '/Counties/geo_export_b749f330-e0bd-4f34-80b8-f9a7de8529af.shp'
-    # shape_file = r'/Users/brendan/Documents/Coding/RedfinTravelTime/Counties/geo_export_b749f330-e0bd-4f34-80b8-f9a7de8529af.shp'
-    gdf = gpd.read_file(shape_file)  # Read file into a geodataframe
-    gdf = gdf.to_crs(epsg=3857)
-    gdf = gdf.set_index('county')
-
-    # Add in Santa Cruz, which isn't the Bay Area because ???
-    # shape_file_SC = r'/Users/brendan/Documents/Coding/RedfinTravelTime/Counties/SC_County_Boundary/County_Boundary.shp'
-    shape_file_SC = file_path + '/Counties/SC_County_Boundary/County_Boundary.shp'
-    gdf_SC = gpd.read_file(shape_file_SC)  # Read file into a geodataframe
-    gdf_SC = gdf_SC.to_crs(epsg=3857)
-    gdf_SC['county'] = 'Santa Cruz'
-    gdf_SC['objectid'] = 10.0
-    gdf_SC['fipsstco'] = '06087'
-    gdf_SC = gdf_SC.drop(labels=['OBJECTID', 'County_Bdy', 'SHAPE_Leng', 'SHAPE_Area'], axis=1)
-    gdf_SC = gdf_SC.set_index('county')
-    gdf = gpd.GeoDataFrame(pd.concat([gdf, gdf_SC], ignore_index=False))
-    gdf = gdf.set_crs(epsg=3857)
-
-    shape_file_IL = file_path + '/Counties/IL_BNDY_County/IL_BNDY_County_Py.shp'
-    gdf_IL = gpd.read_file(shape_file_IL)
-    gdf_IL = gdf_IL.to_crs(epsg=3857)
-    gdf_IL = gdf_IL.rename(columns={'COUNTY_NAM': 'county', 'CO_FIPS': 'fipsstco'})
-    gdf_IL = gdf_IL.set_index('county')
-    # Add the state number (17) and convert the FIPS to the appropriate format
-    gdf_IL['fipsstco'] = gdf_IL['fipsstco'].apply(lambda x : '17{:03d}'.format(x))
-    gdf = gpd.GeoDataFrame(pd.concat([gdf, gdf_IL], ignore_index=False))
-    gdf = gdf.set_crs(epsg=3857)
+    save_file_name = file_path + '/Counties/' + 'all_counties.pkl'
+    with open(save_file_name, 'rb') as handle:
+        gdf = pickle.load(handle)
 
     return gdf
 

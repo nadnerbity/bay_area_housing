@@ -11,6 +11,8 @@ Slides/
 # ignore levels data
 levels_data/
 
+__pycache__*
+
 # other stuff that exists, but I dunno why
 .DS_Store
 .idea/
