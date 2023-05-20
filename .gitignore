@@ -12,6 +12,7 @@ Slides/
 levels_data/
 
 __pycache__*
+*.pyc
 
 # other stuff that exists, but I dunno why
 .DS_Store
