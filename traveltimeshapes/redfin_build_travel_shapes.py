@@ -13,33 +13,46 @@ __status__ = "Development"
 import pandas as pd
 import geopandas as gpd
 import pickle
+import json
+import os
 
+
+def loadSingleDataFile(fileToLoad):
+    # Load the combined json file into memory
+    with open(fileToLoad) as json_file:
+        data = json.load(json_file)
+    # Convert the geojson component to a pandas data frame.
+    gdf = gpd.GeoDataFrame.from_features(data[1])
+    gdf = gdf.set_crs(epsg=4326)
+    gdf = gdf.to_crs(epsg=3857)
+
+    # Load the request details into a pandas dataframe
+    df = pd.DataFrame(data[0])
+    # Normalize the data to all have their own column
+    df = pd.json_normalize(df.iloc[0].arrival_searches)
+
+    # Combine the two dataframes.
+    for col in df.columns:
+        gdf[col] = df[col]
+
+    return gdf
+
+
+# Load the data file by file.
+N = 0
+files = os.listdir()
+for f in files:
+    if f.endswith(".json"):
+        temp = loadSingleDataFile(f)
+        if N == 0:
+            gdf = temp
+            N += 1
+        else:
+            gdf = pd.concat([gdf, temp], ignore_index=True)
+
+# Save the data to a pickle file to make loading it easier.
 travelTimeFilename = 'travelTimeShapes.pkl'
-dataID = 'livermore'
 
-with open(travelTimeFilename, 'rb') as handle:
-    oldGdf = pickle.load(handle)
-
-# Load the new shape file
-gdf = gpd.read_file(dataID + '_polygon.txt')
-# Convert to the epsg of the new data to the epsg you've been using.
-gdf = gdf.to_crs(epsg=3857)
-
-# Load the query details for the new shape file
-df = pd.read_json(dataID + '_request.txt')
-# Normalize the data to all have their own column
-df = pd.json_normalize(df.iloc[0].arrival_searches)
-# Update the name of the shape
-df.at[0, 'id'] = dataID
-
-# Combine the two dataframes.
-for col in df.columns:
-    gdf[col] = df[col]
-
-# Add the new shape to the file with all the shapes in them.
-oldGdf = pd.concat([oldGdf, gdf], ignore_index=True)
-
-# gdf.to_file(travelTimeFilename, driver='GeoJSON')
 with open(travelTimeFilename, 'wb') as handle:
-    pickle.dump(oldGdf, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    pickle.dump(gdf, handle, protocol=pickle.HIGHEST_PROTOCOL)
 

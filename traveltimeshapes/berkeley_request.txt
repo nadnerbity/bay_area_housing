@@ -1,7 +1,7 @@
 {
   "arrival_searches": [
     {
-      "id": "isochrone-0",
+      "id": "berkeley",
       "coords": {
         "lat": 37.879460301422576,
         "lng": -122.2422981262207

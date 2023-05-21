@@ -23,10 +23,14 @@ from redfin_functions import *
 
 travelTimeShape = load_travel_time_shapes()
 
-lab = 'berkeley'
+lab = 'slac'
 fig1, ax1 = plot_bay_area_map(1234, lab)
 
 plot_gpd_boundary_on_map(travelTimeShape[travelTimeShape['id'] == lab], ax1, 'red')
 
 gdf = load_data_by_date('17042023')
 plot_gpd_data_on_map(gdf, ax1, 'blue')
+
+# Split out only the houses inside the travel time polygon
+inside = gdf[gdf.geometry.within(travelTimeShape[travelTimeShape['id'] == lab].geometry)]
+plot_gpd_data_on_map(inside, ax1, 'black')

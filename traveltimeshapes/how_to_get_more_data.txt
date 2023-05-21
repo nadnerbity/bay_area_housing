@@ -3,6 +3,20 @@ This is a clunky way to get data, but saves you from having to pay for an API th
 Goto this website:
 https://playground.traveltime.com/isochrones
 
-Update the inputs to give you the shape you want. On the right there will be two boxes you can copy. The top one is request, that goes into a 'name_request.txt' file. The bottom one is geojson data for the shape, that goes into a 'name_polygon.txt' file. The script 'redfin_build_travel_shapes.py' combines the two and then writes a combined geopandas dataframe in pickle format to disk.
+Update the inputs to give you the shape you want. On the right there will be two boxes you can copy. Put data from both of those boxes into a json like format in a single file with the format:
+[
+ALL REQUEST DATA,
+ALL REPLY DATA
+]
+
+You can use the "copy" button on the web page to copy everything and then paste it.
+
+Then you need to update the "id" piece of the request, which is probably something like "isochrone-0" to the lab in question. Do not add the time here. I'm going to update 'Redfin_build_travel_shapes.py" to parse the data into appropriate columns for sorting when plotting.
+
+Save the file to whatever name you want .json. The redfin_build_travel_shapes.py" script is going to parse every .json file in this directory to generate a list of shapes.
+
+
+OLD:
+The top one is request, that goes into a 'name_request.txt' file. The bottom one is geojson data for the shape, that goes into a 'name_polygon.txt' file. The script 'redfin_build_travel_shapes.py' combines the two and then writes a combined geopandas dataframe in pickle format to disk.
 
 It does not check for duplicated, you're going to need to be careful to not add the same thing a billion times.
