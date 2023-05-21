@@ -1,0 +1,16 @@
+{
+  "arrival_searches": [
+    {
+      "id": "isochrone-0",
+      "coords": {
+        "lat": 37.69088430259205,
+        "lng": -121.71838760375977
+      },
+      "arrival_time": "2021-12-06T16:30:00.000Z",
+      "travel_time": 1800,
+      "transportation": {
+        "type": "driving"
+      }
+    }
+  ]
+}
