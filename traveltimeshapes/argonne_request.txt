@@ -1,0 +1,16 @@
+{
+  "arrival_searches": [
+    {
+      "id": "argonne",
+      "coords": {
+        "lat": 41.71956803760863,
+        "lng": -87.97988891601562
+      },
+      "arrival_time": "2023-05-20T15:30:00.000Z",
+      "travel_time": 1800,
+      "transportation": {
+        "type": "driving"
+      }
+    }
+  ]
+}

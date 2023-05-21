@@ -1,0 +1,16 @@
+{
+  "arrival_searches": [
+    {
+      "id": "slac",
+      "coords": {
+        "lat": 37.42348023362338,
+        "lng": -122.20659255981445
+      },
+      "arrival_time": "2023-05-20T15:30:00.000Z",
+      "travel_time": 1800,
+      "transportation": {
+        "type": "driving"
+      }
+    }
+  ]
+}

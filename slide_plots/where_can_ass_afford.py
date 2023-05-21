@@ -11,10 +11,8 @@ from redfin_functions import *
 plt.ion()
 plt.close('all')
 
-
 def principal_to_income(r, n):
     return (1-(1+r)**-n)/40/r
-
 
 # ------------------------ DATA IMPORT -----------------------------
 data_name_to_load = 'slac'

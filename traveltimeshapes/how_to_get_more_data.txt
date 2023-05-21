@@ -1,0 +1,8 @@
+This is a clunky way to get data, but saves you from having to pay for an API that you will use maybe once a year.
+
+Goto this website:
+https://playground.traveltime.com/isochrones
+
+Update the inputs to give you the shape you want. On the right there will be two boxes you can copy. The top one is request, that goes into a 'name_request.txt' file. The bottom one is geojson data for the shape, that goes into a 'name_polygon.txt' file. The script 'redfin_build_travel_shapes.py' combines the two and then writes a combined geopandas dataframe in pickle format to disk.
+
+It does not check for duplicated, you're going to need to be careful to not add the same thing a billion times.

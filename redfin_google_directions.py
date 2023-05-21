@@ -95,7 +95,6 @@ gmaps = googlemaps.Client(key=api_key, queries_per_second=10)
 slac_latlng = '37.421317,-122.204204'
 livermore_latlng = '37.689547127607895,-121.71852305292059'
 berkeley_latlng = '37.8752010509367,-122.25297158693019'
-home_latlng = '37.395723,-122.012859'
 hayward_latlng = '37.628641,-122.072809'
 
 # ------------------------ DATA IMPORT -----------------------------

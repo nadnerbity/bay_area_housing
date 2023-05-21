@@ -499,3 +499,11 @@ def draw_qualifying_area():
     QA = QA.to_crs(epsg=3857)
     return QA
 
+
+def load_travel_time_shapes():
+    load_file_name = file_path + '/traveltimeshapes/' + 'travelTimeShapes.pkl'
+
+    with open(load_file_name, 'rb') as handle:
+        gdf = pickle.load(handle)
+    return gdf
+

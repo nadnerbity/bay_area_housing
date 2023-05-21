@@ -1,0 +1,16 @@
+{
+  "arrival_searches": [
+    {
+      "id": "isochrone-0",
+      "coords": {
+        "lat": 41.85115059465234,
+        "lng": -88.2476806640625
+      },
+      "arrival_time": "2023-05-20T15:30:00.000Z",
+      "travel_time": 1800,
+      "transportation": {
+        "type": "driving"
+      }
+    }
+  ]
+}
