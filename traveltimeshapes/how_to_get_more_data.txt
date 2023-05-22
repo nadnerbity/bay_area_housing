@@ -9,6 +9,8 @@ ALL REQUEST DATA,
 ALL REPLY DATA
 ]
 
+The requested arrival time at the top is local time for the web browser location. If you are on west coast time, trying to get information about travel times at 8:30 AM Chicago time, you need to set the arrival time to 6:30 AM. The arrival time in the request is in 'Zulu', that is what the Z on the end means.
+
 You can use the "copy" button on the web page to copy everything and then paste it.
 
 Then you need to update the "id" piece of the request, which is probably something like "isochrone-0" to the lab in question. Do not add the time here. I'm going to update 'Redfin_build_travel_shapes.py" to parse the data into appropriate columns for sorting when plotting.

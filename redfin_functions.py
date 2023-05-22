@@ -231,10 +231,13 @@ def plot_bay_area_map(fig_num, data_name):
         gdf_h.plot(ax=ax, color='black', markersize=50, marker='*')
         x_range = 70000
         y_range = 75000
-    elif data_name == 'chicago':
-        gdf_h = convert_lat_lng_to_gdf([-87.981841], [41.709999]) # Argonne
+    elif data_name == 'fermilab':
+        gdf_h = convert_lat_lng_to_gdf([-88.261632], [41.838196])  # FermiLab
         gdf_h.plot(ax=ax, color='black', markersize=50, marker='*')
-        gdf_h = convert_lat_lng_to_gdf([-88.261632], [41.838196]) # FermiLab
+        x_range = 70000
+        y_range = 75000
+    elif data_name == 'argonne':
+        gdf_h = convert_lat_lng_to_gdf([-87.981841], [41.709999])  # Argonne
         gdf_h.plot(ax=ax, color='black', markersize=50, marker='*')
         x_range = 70000
         y_range = 75000

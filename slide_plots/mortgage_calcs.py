@@ -286,10 +286,10 @@ def add_required_salary_to_dataframe(df_in, d, r, rt, rm):
     :return:
     """
     if hasattr(df_in, 'HOAperMonth'):
-        a = lambda y: fsolve(salary_needed_for_given_house_price, [250000],
+        a = lambda y: fsolve(salary_needed_for_given_house_price, [450000],
                              args=(y.PRICE, d, r, rt, rm, y.HOAperMonth))[0] / 1000
     else:
-        a = lambda y: fsolve(salary_needed_for_given_house_price, [250000],
+        a = lambda y: fsolve(salary_needed_for_given_house_price, [450000],
                              args=(y.PRICE, d, r, rt, rm, 0))[0] / 1000
 
     df_in['required_salary'] = df_in.apply(a, axis=1)

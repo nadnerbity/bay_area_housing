@@ -3,34 +3,80 @@
 import sys
 sys.path.insert(1, '/Users/brendan/Documents/Coding/RedfinTravelTime')
 from redfin_functions import *
+from mortgage_calcs import *
 import matplotlib.pyplot as plt
+from scipy.optimize import fsolve
 plt.ion()
 plt.close('all')
 
+# Load the shape files for travel time
+travelTimeShape = load_travel_time_shapes()
 
-# ------------------------ DATA IMPORT berkeley -----------------------------
-data_name_to_load = 'slac'
-# Load the data
-gdf = load_data(data_name_to_load)
-# Load the county shapes
-gdf_c = load_county_shape_file()
+# Encode the location in the traveltime shapes to make them selectable by number. There has to be a better way to do
+# this.
+lab = ['slac', 'berkeley', 'livermore', 'fermilab', 'argonne']
+N = [2, 8, 1, 3, 6]
+NN = 4
 
-# Load the GPR fit and scaler functions
-gpr, x_scaler, y_scaler = load_gpr_and_scalers(data_name_to_load)
+fig1, ax1 = plot_bay_area_map(1234, lab[NN])
+plot_gpd_boundary_on_map(travelTimeShape.iloc[[N[NN]]], ax1, 'black')
 
-# Generate a grid in order to make contours
-print('Generating grid to make contours with')
-lat_grid, lng_grid, y_grid = generate_grid_from_gpr(gdf, gpr, x_scaler, y_scaler, data_name_to_load)
+dateToLoad = '17042023'
+gdf = load_data_by_date(dateToLoad)
+# Select only single family homes
+gdf = gdf.loc[gdf['PROPERTY TYPE'] == 'Single Family Residential']
+gdf = gdf.loc[gdf['SALE TYPE'] == 'MLS Listing']
+# Remove <=2 bedroom listings, these aren't family friendly
+gdf = gdf.loc[gdf['BEDS'] > 2.0]
+# Remove <=1 bathroom listings, these aren't family friendly
+gdf = gdf.loc[gdf['BATHS'] > 1.0]
+gdf = gdf.loc[gdf['PRICE'] < 6000000]
 
-# Generate a time contour
-print('Generating contours')
-time_to_contour = 60.0*27.6
-gpd_cont = generate_time_contours_from_grid(lng_grid, lat_grid, y_grid, time_to_contour)
-# Find all the houses inside the time contour
-in_boundary = gdf[gdf.geometry.within(gpd_cont.geometry[0])]
+# Plot the data!
+plot_gpd_data_on_map(gdf, ax1, 'blue')
 
-# Plot everything
-fig1, ax1 = plot_bay_area_map(1234, data_name_to_load)  # generate a bay area map
-plot_gpd_boundary_on_map(gpd_cont, ax1, 'black') # Plot the time contour on it
-plot_gpd_data_on_map(in_boundary, ax1, 'red')  # Plot the housing data on it.
+# Split out only the houses inside the travel time boundary
+inside = gdf[gdf.geometry.within(travelTimeShape.iloc[N[NN]].geometry)]
+
+a = lambda y: fsolve(salary_needed_for_given_house_price, [450000],
+                     args=(y.PRICE, y.PRICE*0.2, 0.07/12, 0.025/12, 0.01/12, 0))[0] / 1000
+
+inside['required_salary'] = inside.apply(a, axis=1)
+inside = inside.sort_values('required_salary')
+plot_gpd_data_on_map(inside, ax1, 'red')
+ax1.set_title(lab[NN] + ' date:' + dateToLoad, fontsize=20)
+
+plt.close(37)
+plt.figure(37)
+ax1 = plt.subplot(211)
+plt.hist(inside.PRICE.values/1e6,
+         50,
+         density=False,
+         facecolor='b',
+         alpha=0.75)
+plt.xlabel('Price [$M]', fontsize=20)
+plt.ylabel('N [1]', fontsize=20)
+plt.xlim([0, 3.0])
+
+ax2 = plt.subplot(212)
+plt.hist(inside.required_salary.values,
+         50,
+         density=False,
+         facecolor='b',
+         alpha=0.75)
+plt.xlabel('Required Yearly Salary [$k]', fontsize=20)
+plt.ylabel('N [1]', fontsize=20)
+plt.xlim([0, 800])
+plt.tight_layout()
+
+
+correlation = "{:.4f}".format(inside['PRICE'].corr(inside['DaysOnMarket']))
+plt.close(567)
+plt.figure(567)
+plt.scatter(inside.DaysOnMarket, inside.PRICE)
+plt.xlim([0, 45])
+plt.xlabel('Days on Market [days]', fontsize=18)
+plt.ylabel('Price [$]', fontsize=18)
+plt.title('Correlation: ' + correlation, fontsize=18)
+plt.tight_layout()
 

@@ -13,7 +13,8 @@ __status__ = "Development"
 import pandas as pd
 import geopandas as gpd
 import pickle
-import os, sys
+import os
+import sys
 
 file_path = os.path.abspath(os.path.dirname(__file__))
 base = '/'.join(file_path.split('/')[:-1])
@@ -23,14 +24,18 @@ from redfin_functions import *
 
 travelTimeShape = load_travel_time_shapes()
 
-lab = 'slac'
+lab = 'argonne'
+N = 6
 fig1, ax1 = plot_bay_area_map(1234, lab)
 
-plot_gpd_boundary_on_map(travelTimeShape[travelTimeShape['id'] == lab], ax1, 'red')
+plot_gpd_boundary_on_map(travelTimeShape.iloc[[N]], ax1, 'black')
 
 gdf = load_data_by_date('17042023')
 plot_gpd_data_on_map(gdf, ax1, 'blue')
 
 # Split out only the houses inside the travel time polygon
-inside = gdf[gdf.geometry.within(travelTimeShape[travelTimeShape['id'] == lab].geometry)]
-plot_gpd_data_on_map(inside, ax1, 'black')
+# inside = gdf[gdf.geometry.within(travelTimeShape[travelTimeShape['id'] == lab].geometry)]
+
+inside = gdf[gdf.geometry.within(travelTimeShape.iloc[N].geometry)]
+plot_gpd_data_on_map(inside, ax1, 'red')
+
