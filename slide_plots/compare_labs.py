@@ -14,14 +14,17 @@ travelTimeShape = load_travel_time_shapes()
 
 # Encode the location in the traveltime shapes to make them selectable by number. There has to be a better way to do
 # this.
-lab = ['slac', 'berkeley', 'livermore', 'fermilab', 'argonne']
-N = [2, 8, 1, 3, 6]
-NN = 4
+lab = ['slac', 'berkeley', 'livermore', 'fermilab', 'argonne', 'slac']
+N = [2, 8, 1, 3, 6, 10]
+NN = 5
+dateToLoad = '17042023'
+dateToLoad = '28032022'
 
+# Load the travel time shape
 fig1, ax1 = plot_bay_area_map(1234, lab[NN])
 plot_gpd_boundary_on_map(travelTimeShape.iloc[[N[NN]]], ax1, 'black')
 
-dateToLoad = '17042023'
+# Load the housing data
 gdf = load_data_by_date(dateToLoad)
 # Select only single family homes
 gdf = gdf.loc[gdf['PROPERTY TYPE'] == 'Single Family Residential']
@@ -39,7 +42,7 @@ plot_gpd_data_on_map(gdf, ax1, 'blue')
 inside = gdf[gdf.geometry.within(travelTimeShape.iloc[N[NN]].geometry)]
 
 a = lambda y: fsolve(salary_needed_for_given_house_price, [450000],
-                     args=(y.PRICE, y.PRICE*0.2, 0.07/12, 0.025/12, 0.01/12, 0))[0] / 1000
+                     args=(y.PRICE, y.PRICE*0.2, 0.03/12, 0.025/12, 0.01/12, 0))[0] / 1000
 
 inside['required_salary'] = inside.apply(a, axis=1)
 inside = inside.sort_values('required_salary')
@@ -57,6 +60,7 @@ plt.hist(inside.PRICE.values/1e6,
 plt.xlabel('Price [$M]', fontsize=20)
 plt.ylabel('N [1]', fontsize=20)
 plt.xlim([0, 3.0])
+plt.title(dateToLoad, fontsize=18)
 
 ax2 = plt.subplot(212)
 plt.hist(inside.required_salary.values,
