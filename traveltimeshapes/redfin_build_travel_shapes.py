@@ -18,6 +18,7 @@ import os
 
 
 def loadSingleDataFile(fileToLoad):
+    print(fileToLoad)
     # Load the combined json file into memory
     with open(fileToLoad) as json_file:
         data = json.load(json_file)
@@ -49,6 +50,21 @@ for f in files:
             N += 1
         else:
             gdf = pd.concat([gdf, temp], ignore_index=True)
+
+
+# Save the old format of travel time contour
+with open('2022_travel_contour.bjson') as json_file:
+    data = json.load(json_file)
+gdfo = gpd.GeoDataFrame.from_features(data)
+gdf0 = gdfo.set_crs(epsg=3857)
+gdfo['search_id'] = 'slac'
+gdfo['transportation.type'] = 'driving'
+gdfo['coords.lat'] = 37.426070
+gdfo['coords.lng'] = -122.207794
+gdfo['id'] = 'slac'
+gdfo['travel_time'] = 27.6*60
+gdfo['arrival_time'] = '2022-05-22T13:30:00.000Z'
+gdf = pd.concat([gdf, gdfo], ignore_index=True)
 
 # Save the data to a pickle file to make loading it easier.
 travelTimeFilename = 'travelTimeShapes.pkl'
