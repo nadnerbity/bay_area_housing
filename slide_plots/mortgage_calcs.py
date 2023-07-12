@@ -224,6 +224,8 @@ def how_much_can_afford(x, s, d, r, rt, rm):
     optimizer.
     It starts with HUD defined maximum housing costs (30% salary before taxes) and adds in any money that might come
     from using the mortgage interest deduction and subtracts off the cost of the mortgage, taxes and maintenance.
+    Thus, if it returns 0 the household is paying exactly 30% of their before tax income on housing. If it returns a
+    negative number they are spending more than 30%, if it returns a positive number they are spending less than 30%.
 
     :param x: Price of house
     :param s: Yearly salary of family
@@ -294,3 +296,24 @@ def add_required_salary_to_dataframe(df_in, d, r, rt, rm):
 
     df_in['required_salary'] = df_in.apply(a, axis=1)
     return df_in
+
+
+def downpayment_help_needed_for_given_salary_and_home_price(d, x, s, r, rt, rm, hoa):
+    """
+    Function used to solve for how much down payment assistance is required to make a house price x affordable on a salary s.
+    This is the same as 'salary_needed_for_given_house_price' with the first and third variables switched for use to scipy.fsolve
+    It starts with HUD defined maximum housing costs (30% salary before taxes) and adds in any money that might come
+    from using the mortgage interest deduction and subtracts off the cost of the mortgage, taxes and maintenance.
+
+    :param d: House down payment in dollars
+    :param x: Price of house
+    :param s: Yearly salary of family
+    :param r: monthly interest rate
+    :param rt: monthly tax rate
+    :param rm: monthly maintenance rate
+    :param hoa: Any (monthly) HOA fees that may be required. This can also be used to add any monthlies (or
+    reduce monthlies by making negative this value negative)
+    :return: Money remaining that HUD says can safely be used for housing. If this is zero you're at the HUD
+    recommended 30%. If this number is negative you're paying more than 30%. If this number is positive you're paying less than 30%.
+    """
+    return salary_needed_for_given_house_price(s, x, d, r, rt, rm, hoa)

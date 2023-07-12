@@ -1,4 +1,5 @@
-# Compare the travel times for different labs
+# Compare the travel times for different labs. This file is for plotting the various travel time bubbles around the
+# different labs and how much houses cost inside those bubbles.
 
 import sys
 sys.path.insert(1, '/Users/brendan/Documents/Coding/RedfinTravelTime')
@@ -16,9 +17,9 @@ travelTimeShape = load_travel_time_shapes()
 # this.
 lab = ['slac', 'berkeley', 'livermore', 'fermilab', 'argonne', 'slac']
 N = [2, 8, 1, 3, 6, 10]
-NN = 5
+NN = 0
 dateToLoad = '17042023'
-dateToLoad = '28032022'
+# dateToLoad = '28032022'
 
 # Load the travel time shape
 fig1, ax1 = plot_bay_area_map(1234, lab[NN])
@@ -42,7 +43,7 @@ plot_gpd_data_on_map(gdf, ax1, 'blue')
 inside = gdf[gdf.geometry.within(travelTimeShape.iloc[N[NN]].geometry)]
 
 a = lambda y: fsolve(salary_needed_for_given_house_price, [450000],
-                     args=(y.PRICE, y.PRICE*0.2, 0.03/12, 0.025/12, 0.01/12, 0))[0] / 1000
+                     args=(y.PRICE, y.PRICE*0.2, 0.07/12, 0.01/12, 0.01/12, 0))[0] / 1000
 
 inside['required_salary'] = inside.apply(a, axis=1)
 inside = inside.sort_values('required_salary')
@@ -68,7 +69,7 @@ plt.hist(inside.required_salary.values,
          density=False,
          facecolor='b',
          alpha=0.75)
-plt.xlabel('Required Yearly Salary [$k]', fontsize=20)
+plt.xlabel('Required Household Yearly Salary [$k]', fontsize=20)
 plt.ylabel('N [1]', fontsize=20)
 plt.xlim([0, 800])
 plt.tight_layout()
