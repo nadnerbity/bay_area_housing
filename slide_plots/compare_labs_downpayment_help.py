@@ -22,8 +22,12 @@ dateToLoad = '17042023'
 # dateToLoad = '28032022'
 
 # Load the travel time shape
-fig1, ax1 = plot_bay_area_map(1234, lab[NN])
-plot_gpd_boundary_on_map(travelTimeShape.iloc[[N[NN]]], ax1, 'black')
+# fig1, ax1 = plot_bay_area_map(1234, lab[NN])
+# plot_gpd_boundary_on_map(travelTimeShape.iloc[[N[NN]]], ax1, 'black')
+
+NN = 7
+fig1, ax1 = plot_bay_area_map(1234, travelTimeShape.iloc[NN].id)
+plot_gpd_boundary_on_map(travelTimeShape.iloc[[NN]], ax1, 'black')
 
 # Load the housing data
 gdf = load_data_by_date(dateToLoad)
@@ -39,7 +43,7 @@ gdf = gdf.loc[gdf['PRICE'] < 6000000]
 
 
 # Split out only the houses inside the travel time boundary
-inside = gdf[gdf.geometry.within(travelTimeShape.iloc[N[NN]].geometry)]
+inside = gdf[gdf.geometry.within(travelTimeShape.iloc[NN].geometry)]
 
 # Plot the data!
 plot_gpd_data_on_map(gdf, ax1, 'blue')
@@ -62,7 +66,7 @@ A = [dp(b) for b in salaries]
 inside = inside.sort_values('PRICE')
 
 p_1 = inside.iloc[0].PRICE
-p_25th = inside.iloc[48].PRICE
+p_25th = inside.iloc[int(len(inside)/4)].PRICE
 slac_median = inside.PRICE.median()
 
 plt.close(673)

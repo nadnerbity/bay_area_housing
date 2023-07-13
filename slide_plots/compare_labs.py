@@ -15,15 +15,18 @@ travelTimeShape = load_travel_time_shapes()
 
 # Encode the location in the traveltime shapes to make them selectable by number. There has to be a better way to do
 # this.
-lab = ['slac', 'berkeley', 'livermore', 'fermilab', 'argonne', 'slac']
-N = [2, 8, 1, 3, 6, 10]
-NN = 0
+# lab = ['slac', 'berkeley', 'livermore', 'fermilab', 'argonne', 'slac', 'slac', 'slac']
+# N = [2, 8, 1, 3, 6, 10, 7, 11]
+# NN = 1
 dateToLoad = '17042023'
 # dateToLoad = '28032022'
 
 # Load the travel time shape
-fig1, ax1 = plot_bay_area_map(1234, lab[NN])
-plot_gpd_boundary_on_map(travelTimeShape.iloc[[N[NN]]], ax1, 'black')
+# fig1, ax1 = plot_bay_area_map(1234, lab[NN])
+# plot_gpd_boundary_on_map(travelTimeShape.iloc[[N[NN]]], ax1, 'black')
+NN = 7
+fig1, ax1 = plot_bay_area_map(1234, travelTimeShape.iloc[NN].id)
+plot_gpd_boundary_on_map(travelTimeShape.iloc[[NN]], ax1, 'black')
 
 # Load the housing data
 gdf = load_data_by_date(dateToLoad)
@@ -40,15 +43,16 @@ gdf = gdf.loc[gdf['PRICE'] < 6000000]
 plot_gpd_data_on_map(gdf, ax1, 'blue')
 
 # Split out only the houses inside the travel time boundary
-inside = gdf[gdf.geometry.within(travelTimeShape.iloc[N[NN]].geometry)]
+# inside = gdf[gdf.geometry.within(travelTimeShape.iloc[N[NN]].geometry)]
+inside = gdf[gdf.geometry.within(travelTimeShape.iloc[NN].geometry)]
 
 a = lambda y: fsolve(salary_needed_for_given_house_price, [450000],
-                     args=(y.PRICE, y.PRICE*0.2, 0.07/12, 0.01/12, 0.01/12, 0))[0] / 1000
+                     args=(y.PRICE, y.PRICE*0.2, 0.07/12, 0.025/12, 0.01/12, 0))[0] / 1000
 
 inside['required_salary'] = inside.apply(a, axis=1)
 inside = inside.sort_values('required_salary')
 plot_gpd_data_on_map(inside, ax1, 'red')
-ax1.set_title(lab[NN] + ' date:' + dateToLoad, fontsize=20)
+ax1.set_title(travelTimeShape.iloc[NN].id + ' date:' + dateToLoad, fontsize=20)
 
 plt.close(37)
 plt.figure(37)
@@ -56,7 +60,7 @@ ax1 = plt.subplot(211)
 plt.hist(inside.PRICE.values/1e6,
          50,
          density=False,
-         facecolor='b',
+         facecolor='r',
          alpha=0.75)
 plt.xlabel('Price [$M]', fontsize=20)
 plt.ylabel('N [1]', fontsize=20)
@@ -67,21 +71,21 @@ ax2 = plt.subplot(212)
 plt.hist(inside.required_salary.values,
          50,
          density=False,
-         facecolor='b',
+         facecolor='r',
          alpha=0.75)
 plt.xlabel('Required Household Yearly Salary [$k]', fontsize=20)
 plt.ylabel('N [1]', fontsize=20)
 plt.xlim([0, 800])
 plt.tight_layout()
-
-
-correlation = "{:.4f}".format(inside['PRICE'].corr(inside['DaysOnMarket']))
-plt.close(567)
-plt.figure(567)
-plt.scatter(inside.DaysOnMarket, inside.PRICE)
-plt.xlim([0, 45])
-plt.xlabel('Days on Market [days]', fontsize=18)
-plt.ylabel('Price [$]', fontsize=18)
-plt.title('Correlation: ' + correlation, fontsize=18)
 plt.tight_layout()
+
+# correlation = "{:.4f}".format(inside['PRICE'].corr(inside['DaysOnMarket']))
+# plt.close(567)
+# plt.figure(567)
+# plt.scatter(inside.DaysOnMarket, inside.PRICE)
+# plt.xlim([0, 45])
+# plt.xlabel('Days on Market [days]', fontsize=18)
+# plt.ylabel('Price [$]', fontsize=18)
+# plt.title('Correlation: ' + correlation, fontsize=18)
+# plt.tight_layout()
 
